@@ -3,6 +3,7 @@ oscillator.toMaster();
 //var omni = new Tone.OmniOscillator(220,"sawtooth");
 var synth = new Tone.MonoSynth();
 synth.toMaster();
+//var env = new Envelope();
 function toggleChange(input)
 {
 	switch(input)
@@ -24,10 +25,14 @@ function keyboardChange(input)
 		//There has to be an easier way...
 		//wikipedia.org/MIDI Tuning System
 		var frequency = Math.pow(2,(input.note-69)/12) * 440;
-		//Higher notes decay slower...
 		console.log(frequency);
-		synth.triggerAttackRelease(frequency);
+		synth.triggerAttackRelease(frequency,1,0,1);
+		//synth.envelope = new Tone.Envelope();
 	}
+}
+function envChange(input)
+{
+	console.log(input);
 }
 nx.onload = function()
 {
@@ -35,4 +40,5 @@ nx.onload = function()
 	dial1.on('value', function(data){dialChange(data);});
 	keyboard1.octaves = 8;
 	keyboard1.on('*', function(data){keyboardChange(data);});
+	envelope1.on('*', function(data){envChange(data);});
 }

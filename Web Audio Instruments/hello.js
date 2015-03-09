@@ -1,11 +1,14 @@
-var oscillator = new Tone.Oscillator(220, "sine");
+var oscillator = new Tone.Oscillator(220, "square");
 oscillator.toMaster();
-var synth = new Tone.PolySynth(4, Tone.MonoSynth);
-synth.toMaster();
-//Why are underscores so popular?
-synth._voices[1].type = "square";
-synth._voices[2].type = "triangle";
-synth._voices[3].type = "sawtooth";
+var types = ["sine", "square", "sawtooth", "triangle"];
+var synths = new Array();
+for(i=0; i<4; i++)
+{
+	synths[i] = new Tone.MonoSynth();
+	synths[i].oscillator.type = types[i];
+	//console.log(synths[i].oscillator.type);
+	synths[i].toMaster();
+}
 function toggleChange(input)
 {
 	switch(input)
@@ -25,9 +28,14 @@ function keyboardChange(input)
 	if(input.on!=0)
 	{
 		//console.log(input);
-		synth.triggerAttack(frequency,1);
+		synths[0].triggerAttack(frequency);
+		synths[1].triggerAttack(frequency);
 	}
-	else synth.triggerRelease(frequency);
+	else
+	{	
+		//synths[0].triggerRelease();
+		synths[1].triggerRelease();
+	}
 }
 function envChange(input)
 {
@@ -41,25 +49,6 @@ function sliderChange(input)
 {
 	joints1.threshold = input.value * 100;
 	joints1.init();
-}
-function jointsChange(input)
-{
-	if(input.node0)
-	{
-		synth._voices
-	}
-	if(input.node1)
-	{
-		
-	}
-	if(input.node2)
-	{
-		
-	}
-	if(input.node3)
-	{
-		
-	}
 }
 nx.onload = function()
 {

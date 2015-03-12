@@ -1,12 +1,14 @@
 var oscillator = new Tone.Oscillator(220, "square");
 oscillator.toMaster();
+oscillator.volume.value = -25;
 var types = ["sine", "square", "sawtooth", "triangle"];
 var synths = new Array();
+console.log(oscillator);
 for(i=0; i<4; i++)
 {
 	synths[i] = new Tone.MonoSynth();
 	synths[i].oscillator.type = types[i];
-	//console.log(synths[i].oscillator.type);
+	console.log(synths[i].oscillator.type);
 	synths[i].toMaster();
 }
 function toggleChange(input)
@@ -19,7 +21,7 @@ function toggleChange(input)
 }
 function dialChange(input)
 {
-	oscillator.setFrequency((input*220)+220);
+	oscillator.frequency.value = ((input*220)+220);
 }
 //Tone Transport, matrix
 function keyboardChange(input)
@@ -27,28 +29,53 @@ function keyboardChange(input)
 	var frequency = Math.pow(2,(input.note-69)/12) * 440;
 	if(input.on!=0)
 	{
-		//console.log(input);
-		synths[0].triggerAttack(frequency);
-		synths[1].triggerAttack(frequency);
+		synths[0].triggerAttackRelease(frequency);
+		synths[1].triggerAttackRelease(frequency);
+		synths[2].triggerAttackRelease(frequency);
+		synths[3].triggerAttackRelease(frequency);
 	}
 	else
 	{	
-		//synths[0].triggerRelease();
+		synths[0].triggerRelease();
 		synths[1].triggerRelease();
+		synths[2].triggerRelease();
+		synths[3].triggerRelease();
 	}
 }
 function envChange(input)
 {
 	//console.log(input);
-	synth.envelope.attack = input.x;
-	synth.envelope.decay = 1 - input.x;
-	synth.envelope.sustain = input.x;
-	synth.envelope.release = 1 - input.x;
+	for(var i=0; i<4; i++)
+	{
+	synths[i].envelope.attack = input.x;
+	synths[i].envelope.decay = 1 - input.x;
+	synths[i].envelope.sustain = input.x;
+	synths[i].envelope.release = 1 - input.x;
+	}
 }
 function sliderChange(input)
 {
 	joints1.threshold = input.value * 100;
 	joints1.init();
+}
+//possibly a better way to get this number. I just guessed.
+var scale = 27;
+function jointsChange(input)
+{
+	//really need a (0,1)->db thing
+	console.log(input);
+	if(input.node0)
+		synths[0].volume.value = (input.node0-1)*scale;
+	else synths[0].volume.value = -100;
+	if(input.node1)
+		synths[1].volume.value = (input.node1-1)*scale;
+	else synths[1].volume.value = -100;
+	if(input.node2)
+		synths[2].volume.value = (input.node2-1)*scale;
+	else synths[2].volume.value = -100;
+	if(input.node3)
+		synths[3].volume.value = (input.node3-1)*scale;
+	else synths[3].volume.value = -100;
 }
 nx.onload = function()
 {

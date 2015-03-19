@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rhizome example</title>
+  <script src="/rhizome/rhizome.js"></script>
+  <script src="js/jquery-2.1.0.min.js"></script>
+  <script src="js/nexusUI.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/styles.css" />
+  <script>
+
+    var users = []
+
+    $(function() {
+
+      rhizome.start(function(err) {
+        //hear when other people connect and disconnect
+        //strangly, we seem to get 2 messages for each event.
+        rhizome.send('/sys/subscribe', ['/broadcast/open/'])
+        rhizome.send('/sys/subscribe', ['/broadcast/close/'])
+      })
+
+      rhizome.on('message', function(address, args) { 
+        console.log("rcvd", address, args)
+        switch(address) {
+          case "/broadcast/open/websockets":
+            if (users.indexOf(args[0])<0) {
+              users.push(args[0])
+              drawUsers();
+            }
+            break;
+          case "/broadcast/close/websockets":
+            if (users.indexOf(args[0])!=-1) {
+              users.splice(users.indexOf(args[0],1))
+            }
+            break;
+        }
+      })
+
+      rhizome.on('connected', function() {
+        console.log('connected!')
+      })
+
+      rhizome.on('connection lost', function() {
+        console.log('connection lost!')
+      })
+
+      rhizome.on('queued', function() {
+        console.log('queued!')
+      })
+
+    })
+
+    nx.onload = function() {
+      nx.colorize("fill","#DDD")
+      nx.colorize("accent","#0c9")
+      matrix1.on('*',function(data) {
+        if (data.list) {
+          rhizome.send('/seq'+matrix1.place, data.list)
+        }
+      })
+      matrix1.sequence(120)
+    }
+
+    function drawUsers() {
+      matrix1.col = users.length;
+      matrix1.resize(25*users.length)
+      matrix1.init()
+      $("#users").empty();
+      for (var i=0;i<users.length;i++) {
+        $("#users").append('<div class="a_user">'+users[i]+'</div>')
+      }
+    }
+    
+  </script>
+</head>
+
+<body>
+
+  Connections
+  <div id="users"></div>
+  <br>
+  <br>
+  Controls<br>
+  <canvas nx="matrix"></canvas>
+
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rhizome example</title>
+  <script src="/rhizome/rhizome.js"></script>
+  <script src="js/jquery-2.1.0.min.js"></script>
+  <script src="js/nexusUI.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/styles.css" />
+  <script>
+
+    $(function() {
+
+      rhizome.start(function(err) {
+        // We want to receive all the messages, so we subscribe to '/'
+        // In this example, we don't want to subscribe to anything...
+        //rhizome.send('/sys/subscribe', ['/'])
+      })
+
+      rhizome.on('connected', function() {
+        console.log('connected!')
+      })
+
+      rhizome.on('connection lost', function() {
+        console.log('connection lost!')
+      })
+
+      rhizome.on('queued', function() {
+        console.log('queued!')
+      })
+
+    })
+
+    nx.onload = function() {
+
+      tabs1.options = ["GUI1","GUI2","GUI3"]
+      tabs1.draw()
+
+      tabs1.on('*',function(data) {
+        console.log(data.text)
+        rhizome.send('/tabs1', [ data.text ])
+      })
+
+    }
+    
+  </script>
+</head>
+
+<body>
+
+  <div>
+    <canvas nx="tabs" style="width:400px;height:100px"></canvas>
+  </div>
+
+</body>
+
+</html>

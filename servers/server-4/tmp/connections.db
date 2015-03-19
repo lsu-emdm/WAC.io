@@ -1,0 +1,8 @@
+{"_id":"osc:127.0.0.1:9001","originalId":"127.0.0.1:9001","data":{"subscriptions":["/"],"infos":{}},"namespace":"osc"}
+{"_id":"websockets:0","originalId":"0","data":{"subscriptions":["/mosaic","/"],"infos":{}},"namespace":"websockets"}
+{"_id":"websockets:0","originalId":"0","data":{"subscriptions":["/mosaic","/","/broadcast/open","/broadcast/close"],"infos":{}},"namespace":"websockets"}
+{"_id":"websockets:0","originalId":"0","data":{"subscriptions":["/mosaic","/","/broadcast/open","/broadcast/close"],"infos":{}},"namespace":"websockets"}
+{"_id":"websockets:0","originalId":"0","data":{"subscriptions":["/mosaic","/","/broadcast/open","/broadcast/close","/broadcast/open/","/broadcast/close/"],"infos":{}},"namespace":"websockets"}
+{"_id":"websockets:0","originalId":"0","data":{"subscriptions":["/mosaic","/","/broadcast/open","/broadcast/close","/broadcast/open/","/broadcast/close/"],"infos":{}},"namespace":"websockets"}
+{"_id":"websockets:1","originalId":"1","data":{"subscriptions":[],"infos":{}},"namespace":"websockets"}
+{"_id":"websockets:1","originalId":"1","data":{"subscriptions":["/"],"infos":{}},"namespace":"websockets"}

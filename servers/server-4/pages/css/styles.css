@@ -1,0 +1,19 @@
+body {
+	font: 12px courier;
+}
+
+canvas {
+	margin:10px;
+}
+
+#users {
+	overflow:auto;
+}
+
+.a_user {
+	margin:3px;
+	border:solid 1px #555;
+	float:left;
+	font: 12px courier;
+	padding:8px;
+}

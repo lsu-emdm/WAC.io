@@ -1,0 +1,22 @@
+<html>
+<head>
+<title>Speaker Interface</title>
+</head>
+<body>
+</body>
+<script src="/rhizome/rhizome.js"></script>
+<script>
+rhizome.start(function(err){
+rhizome.send('/sys/subscribe', ['/test']);
+rhizome.on('/test', function(address, args)
+{
+	console.log("received from:"+address);
+	console.log("args:"+args);
+})
+
+});
+</script>
+
+
+
+</html>

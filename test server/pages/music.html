@@ -8,14 +8,25 @@
 <script src="/rhizome/rhizome.js"></script>
 <script src="nexusUI.js"></script>
 <script>
+var loaded = false;
+function test()
+{
+   if(loaded)
+   {
+       rhizome.send('/test',['foo','bar']);
+	   console.log("sent");
+	   rhizome.send('/definitelyNotTest');
+	   console.log("Sent2");
+	}
+}
 rhizome.start(function(err){
 
-
-rhizome.send('/test', ['hello']);
-
+   loaded = true;
 
 });
 </script>
+
+<button onclick="test();">test</button>
 
 
 

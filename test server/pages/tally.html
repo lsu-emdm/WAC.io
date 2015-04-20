@@ -1,0 +1,30 @@
+<html>
+<body>
+	<p>Votes for 1</p><p id="one" ></p>
+	<br>
+	<p>Votes for 2</p><p id="two" ></p>
+	<br>
+	<button onclick="sendVotes()">Send Current Count</button>
+</body>
+<script src="rhizome/rhizome.js"> </script>
+<script>
+function sendVotes() {
+	rhizome.send('/result', [one,two]);
+}
+var one = 0;
+var two = 0;
+rhizome.start(function(err) {
+	rhizome.send('/sys/subscribe',['/vote']);
+	rhizome.on('message', function(address,args)
+	{
+		console.log(address+": "+args);
+		if(args[0]==1)
+			document.getElementById("one").innerHTML = ++one;
+		else if(args[0]==2)
+			document.getElementById("two").innerHTML = ++two;
+	}
+	);
+} );
+
+</script>
+</html>

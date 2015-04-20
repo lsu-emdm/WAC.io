@@ -1,0 +1,23 @@
+<html>
+<body>
+	<button onclick="vote(1)">Vote 1</button>
+	<button onclick="vote(2)">Vote 2</button>
+	<p id="result">Results undetermined...</p>
+</body>
+<script src="rhizome/rhizome.js" ></script>
+<script>
+function vote(param) {
+	rhizome.send('/vote',[param]);
+}
+
+rhizome.start(function(err) {
+	rhizome.send('/sys/subscribe',['/result']);
+	rhizome.send('/sys/resend',['/result']);
+	rhizome.on('message',function(address, args) {
+		console.log(address+": "+args);
+		document.getElementById("result").innerHTML = "Result: "+args;
+	} );
+}
+);
+</script>
+</html>

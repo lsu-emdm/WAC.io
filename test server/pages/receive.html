@@ -8,7 +8,7 @@
 <script>
 rhizome.start(function(err){
 rhizome.send('/sys/subscribe', ['/test']);
-rhizome.on('/test', function(address, args)
+rhizome.on('message', function(address, args)
 {
 	console.log("received from:"+address);
 	console.log("args:"+args);

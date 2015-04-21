@@ -1,8 +1,16 @@
 # Server tests
 
+Server 1: (audience) web gui controls (performer's) max/msp
+
+Server 2: (performer's) web gui controls (audience's) web audio
+
+Server 3: performer sends different web audio instruments to audience phones
+
+Server 4: each audience member is one column of a sequencer
+
 ## Rhizome
 
-This has been my first exploration of the [Rhizome](https://github.com/sebpiq/rhizome) server toolkit.
+This has been my first exploration of the [Rhizome](https://github.com/sebpiq/rhizome) server toolkit. These demos also use [NexusUI](http://nexusosc.com)
 
 I was able to create most of our server situations in about 6 hours of work, which is really not bad. It wraps socket.io and express, which we talked about using.
 

@@ -1,0 +1,25 @@
+<html>
+<script src="rhizome/rhizome.js"></script>
+<script>
+var users = new Array();
+var currentIndex = 0;
+rhizome.start( function(err) {
+	rhizome.send('/sys/subscribe', ['/broadcast/open/']);
+	rhizome.send('/sys/subscribe', ['/broadcast/close/']);
+	rhizome.send('/sys/subscribe', ['/beatsDone']);
+	rhizome.on('message', function(address, args) {
+		console.log(address+": "+args);
+		//really should be begins with, but i'm lazy
+		if(address=='/broadcast/open')
+			users.push(args[0]);
+		else if(address=='/broadcast/close')
+			users.splice(users.indexOv(address),1);
+		else
+		{
+			currentIndex = ++currentIndex%users.length;
+			rhizome.send('/beats'+users[currentIndex]);
+		}
+		} );
+	});
+</script>
+</html>

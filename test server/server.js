@@ -1,9 +1,17 @@
-var rhizome = require('/rhizome/rhizome');
+var rhizome = require('/rhizome/rhizome.js');
 console.log("hello world");
-rhizome.start(function(err) {
-	rhizome.send('/sys/subscribe', ['/']);
+
+var path = require('path');
+
+module.exports = {
+	http: {
+		staticDir: path.join(__dirname,'/pages'),
+		port: 80
+	},
+	websockets: {},
 }
 
-rhizome.on('message', function(address, args) {
-	console.log(address+": "+args);
-}
+rhizome.start(function(err) {
+	rhizome.send('/sys/subscribe', ['/']);
+	console.log("started?");
+} );

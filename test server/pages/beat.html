@@ -1,0 +1,22 @@
+<html>
+<script src="nexusUI.js"></script>
+<script src="rhizome/rhizome.js"></script>
+<body>
+<canvas nx="matrix"></canvas>
+</body>
+<script>
+rhizome.start( function(err) {
+	rhizome.send('/sys/subscribe', ['/beats'+rhizome.id]);
+	rhizome.on('message', function(address,args) {
+		console.log(address+": "+args);
+		//something about beats
+		rhizome.send('/beatsDone');
+	});
+});
+nx.onload = function()
+{
+	matrix1.row = 1;
+	matrix1.col = 4;
+};
+</script>
+</html>

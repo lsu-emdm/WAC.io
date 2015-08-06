@@ -5,11 +5,7 @@
   <title>Traversal</title>
   <script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="/scripts/jquery.js"></script>
-	<script type="text/javascript" src="/scripts/gibberish_2.0.min.js"></script>
 	<script type="text/javascript" src="/scripts/nexusUI.js"></script>
-	<script type="text/javascript" src="/scripts/nexusTraversal.js"></script>
-	<script type="text/javascript" src="/scripts/nexusToggle.js"></script>
-	<script type="text/javascript" src="/scripts/nexusButton.js"></script>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 
@@ -25,20 +21,10 @@
 			document.getElementById('output').innerHTML=p;
 		});
 
-/*		socket.on('bump',function(username, data) {
-			console.log("Got it! ", data);
-			nx.colorize("#0af");
-			// synth.note(600.);
-			//travTimer = setTimeout(nx.colorize("#ff5500"), 100);
-			var p = '<p>' + username + ':  ' + data + '</p>';
-			document.getElementById('output').innerHTML=p;
-		});
-	*/
 
 		nx.onload = function() {
-			nx.setTransmissionProtocol("local");
 			nx.colorize("#08d");
-			toggle1.localTransmit = function(data) {
+			toggle1.on('*', function(data) {
 				// console.log("XMit: ", data);
 				if(data==1) {
 					socket.emit('section', 1);
@@ -46,45 +32,32 @@
 					socket.emit('section', 0);
 				}
 				
-			}
-			button1.localTransmit = function(data) {
+			});
+			
+			button1.on('*', function(data) {
 				// console.log("XMit: ", data);
 				socket.emit('section', 1);
-			}
-			button2.localTransmit = function(data) {
+			});
+			button2.on('*', function(data) {
 				// console.log("XMit: ", data);
 				socket.emit('section', 2);
-			}
-			button3.localTransmit = function(data) {
+			});
+			button3.on('*', function(data) {
 				// console.log("XMit: ", data);
 				socket.emit('section', 3);
-			}
-			button4.localTransmit = function(data) {
+			});
+			button4.on('*', function(data) {
 				// console.log("XMit: ", data);
 				socket.emit('section', 4);
-			}
-			button5.localTransmit = function(data) {
+			});
+			button5.on('*', function(data) {
 				// console.log("XMit: ", data);
 				socket.emit('section', 5);
-			}
-			button6.localTransmit = function(data) {
+			});
+			button6.on('*', function(data) {
 				// console.log("XMit: ", data);
 				socket.emit('section', 6);
-			}
-			
-			button7.localTransmit = function(data) {
-				// console.log("XMit: ", data);
-				socket.emit('startTraversal', 1);
-			}
-			button8.localTransmit = function(data) {
-				// console.log("XMit: ", data);
-				socket.emit('endSection3', 1);
-			}
-			button9.transmitRelease = false;
-			button9.localTransmit = function(data) {
-				// console.log("XMit: ", data);
-				socket.emit('triggerEvent', 1);
-			}
+			});
 		}
 			
 </script>
@@ -99,15 +72,7 @@
 	5:<canvas nx="button" height="40px" width="40px"></canvas> 
 	6:<canvas nx="button" height="40px" width="40px"></canvas>
 </div>
-<div id="output" style="float:left;"><p>::Bump::</p.></div>
+<div id="output" style="float:left;"><p>::Hi::</p.></div>
 	
-<div id="bouncer" style="clear:both;">
-  <canvas nx="button" height="70px" width="70px"></canvas> Start Section 1
-	<canvas nx="button" height="70px" width="70px"></canvas> End Section 3
-</div> 
-<div id="bouncer" style="clear:both;">
-	<br><br>
-	<canvas nx="button" height="150px" width="150px"></canvas> Trigger Event
-</div>
 </body>
 </html>

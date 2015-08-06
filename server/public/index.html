@@ -6,10 +6,8 @@
   <script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="/scripts/jquery.js"></script>
 	<!--<script type="text/javascript" src="/scripts/gibberish_2.0.min.js"></script>-->
-	<script type="text/javascript" src="/scripts/gibber.lib.js"></script>
+	<script type="text/javascript" src="/scripts/Tone.min.js"></script>
 	<script type="text/javascript" src="/scripts/nexusUI.js"></script>
-	<script type="text/javascript" src="/scripts/nexusTraversal.js"></script>
-	<script type="text/javascript" src="/scripts/nexusToggle.js"></script>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 
@@ -28,8 +26,7 @@
 		var currentInteraction = "none";
 		
  		var socket = io.connect('http://localhost/');
-		socket.on('connect', function() {
-			// socket.emit('addme', );
+			socket.on('connect', function() {
 		});
 		
 		function getName() {
@@ -42,45 +39,17 @@
 			socket.emit('addme', performerName);
 		}
 		
+		socket.on('somebodyToYou', function(somebody) {
+			var p = '<p> ' + somebody + '</p>';
+			document.getElementById('output').innerHTML=p;
+		});
 		
 		socket.on('setSection', function(number, title) {
 			var p = '<p> ' + title + '</p>';
 			document.getElementById('output').innerHTML=p;
-			switch (number) {
-				case 1:
-					currentInteraction = "blots";
-					currentNote = noteCollection[Math.floor(Math.random()*noteCollection.length)];
-					break;
-			 	case 2:
-					currentInteraction = "blits";
-					break;
-				case 3:
-					currentInteraction = "connect";
-					break;
-				case 4:
-					currentInteraction = "blits";
-					break;
-				case 5:
-					currentInteraction = "connect";
-					break;
-				case 6:
-					currentInteraction = "none";
-					if (gibOn) {
-						gTone.amp = 0.0;
-					}
-					toggle1.off();
-					break;
-			 	case 0:
-					currentInteraction = "none";
-					break;
-			}
-			traversal1.setInteraction(currentInteraction);
-			if(gibOn){
-				gibSectionEnable(currentInteraction);
-			}
 		});
 
-		socket.on('bump',function(username, data) {
+		socket.on('tapped',function(username, data) {
 			console.log("Got it! ", data);
 			nx.colorize("#0af");
 			// synth.note(600.);
@@ -89,165 +58,57 @@
 			document.getElementById('output').innerHTML=p;
 		});
 		
-		socket.on('makeBlit',function(x, y, name) {
-			console.log("Make Blit! ", x,y, name);
-			traversal1.makeBlit(x,y,name);
+		socket.on('setSharedToggle', function(data) {
+			toggle2.val = data;
+			toggle2.draw();
 		});
 		
-		socket.on('connectWith',function(name) {
-			traversal1.connectWith(name);
-		});
+		var fmSynth = new Tone.FMSynth({
+		    harmonicity: 0,
+		    modulationIndex: 0,
+		    modulator: {
+		        oscillator: {
+		            type: "sine"
+		        }
+		    }
+		}).toMaster();
 
 		nx.onload = function() {
-			nx.setTransmissionProtocol("local");
+			nx.sendsTo("js");	// default
 			nx.colorize("#08d");
+			
 			toggle1.oscName = "synth";
-				// Resize to screen size
-				var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-				var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
-			document.getElementById('traversal1').width = w;
-			traversal1.width = w-(traversal1.padding*4);
-			document.getElementById('traversal1').height = h;
-			traversal1.height = h - 60 - (traversal1.padding * 4);
+			toggle1.on('*', function(data) {
+				if (data.value == 1){
+		        fmSynth.volume.value= 0.5;
+		    }else if (data.value == 0){
+		        fmSynth.volume.value= 0.;
+		    }
+			});
 			
-			traversal1.setInteraction("none");
+			toggle2.on('*', function(data){
+			    socket.emit('shareToggle', data );
+			});
 			
-					// Messages coming back from the UI: some get passed on to Node via socket.emit(), others are local usually for gibber //
-			traversal1.localTransmit = function(data) {
-				// console.log("data: " + data);
-				var action = data instanceof Array ? data[0] : data;
-				console.log("action: ", action);
-				switch (action) {
-					
-					case "bounce":
-						socket.emit('bumped', 1 );
-						// synth.note(400.);
-						break;
-						
-					case "popBlit":
-						socket.emit('popBlit', 400);
-						if (gibOn) {
-							currentNote = noteCollection[Math.floor(Math.random()*noteCollection.length)];
-							gTone.frequency = Gibber.Theory.Teoria.note(currentNote).fq();
-							gTone.amp = 1.0;
-							setTimeout(function(){gTone.amp = 0.0;}, 100);
-						}
-						break;
-						
-					case "noPopBlit":
-						socket.emit('noPopBlit', data[1], data[2]);
-						break;
-						
-					case "explodeBlot":
-						socket.emit('explodeBlot', currentNote);
-						if (gibOn) {
-							// gBus.amp = 0.0; 
-							gDrum.amp = 0.0;
-							gTone.amp = 0.0;
-						}
-						break;
-						
-					case "blotScope":
-						if (gibOn) {
-							gTone.amp = data[1];
-							// gBus.amp = data[1];
-							gDrum.amp = data[1];
-						}
-						break;
-						
-					case "connected":
-						socket.emit('connected');
-						if (gibOn) {
-							currentNote = noteCollection[Math.floor(Math.random()*noteCollection.length)];
-							gTone.note = currentNote;
-						}
-						break;
-						
-					case "connecting":
-						// console.log("connecting stuff");
-						if (gibOn) {
-							var pitch = Gibber.Theory.Teoria.note(currentNote).fq();
-							gTone.frequency = pitch + (data[1] * pitch * 0.03);
-							gTone.amp = data[2];
-						}
-						break;
+			button1.on('*', function(data) {
+				socket.emit('tap', data);
+			});
+			
+			button2.on('*', function(data) {
+				socket.emit('getSomebody', data);
+			});
+			
+			position1.on('*', function(data) {
+				if(data){
+					socket.emit('location', data[0], data[1]);
 				}
-			}
+			});
 			
-					// **** Gibber Enabling ****
-			toggle1.localTransmit = function(data) {
-				if(data == 1) {
-					if(gibberLaunched) {
-						gibberishEnable();
-						setTimeout(function(){gTone.amp = 0.0;}, 1000);	// Quick Beep on enable...
-					} else {
-						Gibber.init();
-						gibberishEnable();
-					}
-				} else if (data == 0) {
-					gibOn = false;
-					Gibber.clear();
-				}
-			}
-			
+			position1.animate('bounce');
+
 			nx.startPulse();
 		}
 		
-		gibberishEnable = function() {
-			gibberLaunched = 1;
-			gibOn = true;
-			
-			// console.log("pitch? ", Gibber.Theory.Teoria.note(noteCollection[0]).fq());
-
-			gibSectionEnable(currentInteraction);
-			
-				//	** Drums not working either  EDrums (unexpected) or Drums (expected) ** //
-			// gDrum = EDrums('x*o*xo*');
-			// gDrum.snare.snappy = 1;
-			
-				//	** The Bus is just not working **
-			// gBus = Group(gBass,gDrum);
-			// gBus = Bus().amp = 0;
-			// gDrum.send(gBus, 1);
-			// gBass.send(gBus, 1);
-		}
-		
-		gibSectionEnable = function(section) {
-				// TODO: Makes better transitions to leave a delay line and just clear the synths.
-			Gibber.clear();		// Start with a clean slate
-			
-				// Global Gibber Setup //
-			Gibber.scale.root.seq( ['d4','f4'], 2);
-			Gibber.Clock.rate(1.5);
-			
-			switch (section) {
-				case "blits":
-					gTone = Sine({
-						note: noteCollection[0],
-						amp: 0.1
-						});
-					break;
-				case "blots":
-					gTone = Sine({
-						note: noteCollection[0],
-						amp: 0.1
-						});
-					gBass = Mono('bass').note.seq( [0,7,-12], 1/8 );
-					gDrum = Kick().play( [noteCollection[0],0,0,noteCollection[0]], 1/4 );
-					break;
-				case "connect":
-					gTone = Sine({
-						note: noteCollection[0],
-						amp: 0.1
-						});
-					break;
-				case "scribble":
-					break;
-				case "none":
-					break;
-				}
-		}
-			
 		getName();
 </script>
 </head>
@@ -255,7 +116,11 @@
 <div id="control" style="float:left;"><canvas nx="toggle" height="40px" width="40px"></canvas></div>
 <div id="output" style="float:left;"><p>::Bump::</p.></div>
 <div id="bouncer">
-  <canvas nx="traversal" height="300px" width="200px"></canvas>
+  Send x/y OSC to Max:<canvas nx="position" height="300px" width="200px"></canvas>
+	Send OSC to Max:<canvas nx="slider"></canvas>
+	Tap Everyone:<canvas nx="button"></canvas>
+	Toggle Everyone:<canvas nx="toggle"></canvas>
+	Get Random User:<canvas nx="button"></canvas>
 </div> 
 </body>
 
